@@ -6,18 +6,17 @@
 \alias{evolution,stab.blockSeg-method}
 \title{Plot method for a stab.blockSeg object}
 \usage{
-evolution(x, y,...)
+evolution(x, y, thresholds = 10 * (8:1), postprocessing = list(post = TRUE,
+  adjacent = 2), col = "GrayLevel", ask = TRUE)
 
 \S4method{evolution}{stab.blockSeg}(x, y, thresholds = 10 * (8:1),
   postprocessing = list(post = TRUE, adjacent = 2), col = "GrayLevel",
-  ask = TRUE, ...)
+  ask = TRUE)
 }
 \arguments{
 \item{x}{an object of class \code{stab.blockSeg}.}
 
 \item{y}{the observations data (or a transformation).}
-
-\item{...}{used for S4 compatibility.}
 
 \item{thresholds}{the thresholds used (percent the maximum value). By default, thresholds = 10 * (8:1).}
 
@@ -29,6 +28,8 @@ If it is another "character", it is a level blue or red. Else, it is possible to
 the colour (rgb format).}
 
 \item{ask}{If \code{TRUE}, to hit will be necessary to see next plot.}
+
+\item{...}{used for S4 compatibility.}
 }
 \description{
 Produce a plot of two-dimensional segmentation of a \code{stab.blockSeg} fit.

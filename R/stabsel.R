@@ -23,7 +23,7 @@
 ##'
 ##' @export stab.blockSeg
 stab.blockSeg <- function(Y, nsimu, max.break,
-                          max.var = ncol(Y)**2/8, mc.cores=2, verbose=TRUE){
+                          max.var = floor(ncol(Y)**2/8), mc.cores=2, verbose=TRUE){
   if (!(is.matrix(Y)||(class(Y)=="dgeMatrix"))){
     stop("Y must be the observations data (or a transformation)")
   }

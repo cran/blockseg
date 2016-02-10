@@ -5,8 +5,8 @@
 \alias{plot,stab.blockSeg-method}
 \title{Plot method for a stab.blockSeg object}
 \usage{
-\S4method{plot}{stab.blockSeg}(x, y,
-threshold=40,postprocessing=list(post=TRUE,adjacent=2),col="GrayLevel",...)
+\S4method{plot}{stab.blockSeg}(x, y, threshold = 40,
+  postprocessing = list(post = TRUE, adjacent = 2), col = "GrayLevel", ...)
 }
 \arguments{
 \item{x}{an object of class \code{stab.blockSeg}.}
@@ -28,14 +28,15 @@ the colour (rgb format).}
 Produce a plot of two-dimensional segmentation of a \code{stab.blockSeg} fit.
 }
 \examples{
+\dontrun{
 n <- 100
 ## model parameters 
 K <- 5
 mu <- suppressWarnings(matrix(rep(c(1,0),ceiling(K**2/2)), K,K))
-#Y <- rblockdata(n,mu,sigma=.5)$Y
-#stab.out <- stab.blockSeg(Y, 100, 15)
-#plot(stab.out,Y)
-
+Y <- rblockdata(n,mu,sigma=.5)$Y
+stab.out <- stab.blockSeg(Y, 100, 15)
+plot(stab.out,Y)
+}
 }
 \seealso{
 \code{\linkS4class{stab.blockSeg}}.

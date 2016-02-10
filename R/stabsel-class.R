@@ -45,8 +45,6 @@ setClass(
 ##'
 ##' Produce a plot of two-dimensional segmentation of a \code{stab.blockSeg} fit.
 ##'
-##' @usage \S4method{plot}{stab.blockSeg}(x, y,
-##' threshold=40,postprocessing=list(post=TRUE,adjacent=2),col="GrayLevel",...)
 ##' @param x an object of class \code{stab.blockSeg}.
 ##' @param y the observations data (or a transformation).
 ##' @param threshold the threshold used (percent the maximum value).
@@ -68,14 +66,15 @@ setClass(
 ##' @seealso \code{\linkS4class{stab.blockSeg}}.
 ##' 
 ##' @examples
+##' \dontrun{
 ##' n <- 100
 ##' ## model parameters 
 ##' K <- 5
 ##' mu <- suppressWarnings(matrix(rep(c(1,0),ceiling(K**2/2)), K,K))
-##' #Y <- rblockdata(n,mu,sigma=.5)$Y
-##' #stab.out <- stab.blockSeg(Y, 100, 15)
-##' #plot(stab.out,Y)
-##'
+##' Y <- rblockdata(n,mu,sigma=.5)$Y
+##' stab.out <- stab.blockSeg(Y, 100, 15)
+##' plot(stab.out,Y)
+##' }
 ##' @exportMethod plot
 setMethod(
   f="plot",
@@ -83,40 +82,40 @@ setMethod(
   definition=function(x,y,threshold=40,postprocessing=list(post=TRUE,adjacent=2),col="GrayLevel",...){
     
     if (!is.numeric(threshold)){
-      stop("threshold must be a percent strictly between 0 and 100")
+        stop("threshold must be a percent strictly between 0 and 100")
     } else if ((threshold<=0)||(threshold>=100)||(length(threshold)!=1)){
-      stop("threshold must be a percent strictly between 0 and 100")
+        stop("threshold must be a percent strictly between 0 and 100")
     }
     if (!is.list(postprocessing)){
-      stop("postprocessing must be a list")
-    }else{
-      if (!is.logical(postprocessing$post)){
-        stop("postprocessing$post must be logical")
-      } else if (postprocessing$post){
-        if (!is.numeric(postprocessing$adjacent)){
-          stop("postprocessing$adjacent must be a positive integer")
-        }else if ((postprocessing$adjacent<=0)||(floor(postprocessing$adjacent)!=postprocessing$adjacent)){
-          stop("postprocessing$adjacent must be a positive integer")
+        stop("postprocessing must be a list")
+    } else {
+        if (!is.logical(postprocessing$post)){
+            stop("postprocessing$post must be logical")
+        } else if (postprocessing$post){
+            if (!is.numeric(postprocessing$adjacent)){
+                stop("postprocessing$adjacent must be a positive integer")
+        } else if ((postprocessing$adjacent<=0)||(floor(postprocessing$adjacent)!=postprocessing$adjacent)){
+            stop("postprocessing$adjacent must be a positive integer")
         }
-      }
+        }
     }
     if (!(is.matrix(y)||(class(y)=="dgeMatrix"))){
-      stop("y must be the observations data (or a transformation)")
+        stop("y must be the observations data (or a transformation)")
     }
     if (!is.character(col)){
-      stop("col must be a character")
-    }else{
-      if (length(col)==1){
-        if (col=="GrayLevel"){
-          couleur=gray(seq(0,1, length=256))
-          couleur=couleur[length(couleur):1]
+        stop("col must be a character")
+    } else {
+        if (length(col)==1){
+            if (col=="GrayLevel"){
+                couleur=gray(seq(0,1, length=256))
+                couleur=couleur[length(couleur):1]
+            }else{
+                couleur=c(rgb((0:201)/201*200,(0:201)/201*200,255,maxColorValue = 255),"white",
+                          rgb(255,(0:201)/201*200,(0:201)/201*200,maxColorValue = 255)[201:0])
+            }
         }else{
-          couleur=c(rgb((0:201)/201*200,(0:201)/201*200,255,maxColorValue = 255),"white",
-                    rgb(255,(0:201)/201*200,(0:201)/201*200,maxColorValue = 255)[201:0])
+            couleur=col
         }
-      }else{
-        couleur=col
-      }
     }   
     brek=seq(min(y),max(y),length=length(couleur)+1)
     
@@ -131,67 +130,67 @@ setMethod(
     d=ncol(y)
     
     if (postprocessing$post){
-      nr=length(RowBreak)
-      if (nr>1){
-        dist=RowBreak[2:nr]-RowBreak[1:(nr-1)]
-        Rowbreakbis=c()
-        ind=1
-        Rowcompl=c()
-        nr=nr-1
-        while(ind<nr){
-          if (dist[ind]<postprocessing$adjacent){
-            inddeb=ind
-            while((dist[ind]<postprocessing$adjacent)&(ind<nr)){
-              ind=ind+1
+        nr=length(RowBreak)
+        if (nr>1){
+            dist=RowBreak[2:nr]-RowBreak[1:(nr-1)]
+            Rowbreakbis=c()
+            ind=1
+            Rowcompl=c()
+            nr=nr-1
+            while(ind<nr){
+                if (dist[ind]<postprocessing$adjacent){
+                    inddeb=ind
+                    while((dist[ind]<postprocessing$adjacent)&(ind<nr)){
+                        ind=ind+1
+                    }
+                    indfin=ind
+                    indref=inddeb-1+which.max(x@RowBreaks[RowBreak[inddeb:indfin]])
+                    Rowbreakbis=c(Rowbreakbis,RowBreak[indref])
+                    suite=inddeb:indfin
+                    Rowcompl=c(Rowcompl,RowBreak[suite[suite!=indref]])
+                }else{
+                    Rowbreakbis=c(Rowbreakbis,RowBreak[ind])
+                }
+                ind=ind+1
             }
-            indfin=ind
-            indref=inddeb-1+which.max(x@RowBreaks[RowBreak[inddeb:indfin]])
-            Rowbreakbis=c(Rowbreakbis,RowBreak[indref])
-            suite=inddeb:indfin
-            Rowcompl=c(Rowcompl,RowBreak[suite[suite!=indref]])
-          }else{
-            Rowbreakbis=c(Rowbreakbis,RowBreak[ind])
-          }
-          ind=ind+1
-        }
-        if (dist[nr]>=postprocessing$adjacent){
-          Rowbreakbis=c(Rowbreakbis,RowBreak[nr+1])
-        }else{
-          Rowcompl=c(Rowcompl,RowBreak[nr+1])
-        }
-        RowBreak=Rowbreakbis
-        ColLine[Rowcompl]=ColLine[Rowcompl]+2
-      }
-      nc=length(ColBreak)
-      if (nc>1){
-        dist=ColBreak[2:nc]-ColBreak[1:(nc-1)]
-        Colbreakbis=c()
-        ind=1
-        Colcompl=c()
-        nc=nc-1
-        while(ind<nc){
-          if (dist[ind]<postprocessing$adjacent){
-            inddeb=ind
-            while((dist[ind]<postprocessing$adjacent)&(ind<nc)){
-              ind=ind+1
+            if (dist[nr]>=postprocessing$adjacent){
+                Rowbreakbis=c(Rowbreakbis,RowBreak[nr+1])
+            }else{
+                Rowcompl=c(Rowcompl,RowBreak[nr+1])
             }
-            indfin=ind
-            indref=inddeb-1+which.max(x@ColBreaks[ColBreak[inddeb:indfin]])
-            Colbreakbis=c(Colbreakbis,ColBreak[indref])
-            suite=inddeb:indfin
-            Colcompl=c(Colcompl,ColBreak[suite[suite!=indref]])
-          }else{
-            Colbreakbis=c(Colbreakbis,ColBreak[ind])
-          }
-          ind=ind+1
+            RowBreak=Rowbreakbis
+            ColLine[Rowcompl]=ColLine[Rowcompl]+2
         }
-        if (dist[nc]>=postprocessing$adjacent){
+        nc=length(ColBreak)
+        if (nc>1){
+            dist=ColBreak[2:nc]-ColBreak[1:(nc-1)]
+            Colbreakbis=c()
+            ind=1
+            Colcompl=c()
+            nc=nc-1
+            while(ind<nc){
+                if (dist[ind]<postprocessing$adjacent){
+                    inddeb=ind
+                    while((dist[ind]<postprocessing$adjacent)&(ind<nc)){
+                        ind=ind+1
+                    }
+                    indfin=ind
+                    indref=inddeb-1+which.max(x@ColBreaks[ColBreak[inddeb:indfin]])
+                    Colbreakbis=c(Colbreakbis,ColBreak[indref])
+                    suite=inddeb:indfin
+                    Colcompl=c(Colcompl,ColBreak[suite[suite!=indref]])
+                }else{
+                    Colbreakbis=c(Colbreakbis,ColBreak[ind])
+          }
+                ind=ind+1
+            }
+            if (dist[nc]>=postprocessing$adjacent){
           Colbreakbis=c(Colbreakbis,ColBreak[nc+1])
-        }else{
-          Colcompl=c(Colcompl,ColBreak[nc+1])
-        }
-        ColBreak=Colbreakbis
-        ColCol[Colcompl]=ColCol[Colcompl]+2
+            }else{
+                Colcompl=c(Colcompl,ColBreak[nc+1])
+            }
+            ColBreak=Colbreakbis
+            ColCol[Colcompl]=ColCol[Colcompl]+2
       }
     }
     
@@ -200,74 +199,62 @@ setMethod(
     par(mfrow=c(2,2),oma=c(0,0,3,0))
     
     ### Affichage matrice originale
-
+    
     image(1:d,1:n,t(y)[,n:1],xlab="",ylab="",xaxt="n",yaxt="n",main="Original data",col=couleur,breaks=brek)
     abline(v=ColBreak-0.5,col="purple")
     abline(h=n-RowBreak+1.5,col="purple")
     
-    ### Affichage plot ligne
+    ## Affichage plot ligne
     
     plot(x@RowBreaks,n:1,col=ColLine+1,xlab="",ylab="n", ylim=c(1,n),yaxt="n")
     if (length(RowBreak)<=1){
-      title(main=paste(as.character(length(RowBreak))," row break",sep=""))
+        title(main=paste(as.character(length(RowBreak))," row break",sep=""))
     }else{
-      title(main=paste(as.character(length(RowBreak))," row breaks",sep=""))
+        title(main=paste(as.character(length(RowBreak))," row breaks",sep=""))
     }
     abline(v=ValSeuilline,col="purple")
     nax=floor(6*par("din")[2]/4)
     axis(2,at=floor(seq(0,n,length=nax)),labels=floor(seq(n,0,length=nax)))
     
     
-    ### Affichage plot colonne
+    ## Affichage plot colonne
     
     plot(1:d,x@ColBreaks,col=ColCol+1,xlab="n", ylab="")
     if (length(ColBreak)<=1){
-      title(main=paste(as.character(length(ColBreak))," column break",sep=""))
+        title(main=paste(as.character(length(ColBreak))," column break",sep=""))
     }else{
-      title(main=paste(as.character(length(ColBreak))," column breaks",sep=""))
+        title(main=paste(as.character(length(ColBreak))," column breaks",sep=""))
     }
     abline(h=ValSeuilCol,col="purple")
     
-    ### Affichage matrice resumee
-    f=function(i){
-      rep(1,i)
-    }
-    if (RowBreak[1]==1){
-      RowBreak=RowBreak[-1]
-    }
-    emplz=diff(c(1,RowBreak,n+1))
-    z=bdiag(lapply(emplz,f))
+    ## Affichage matrice resumee
+    emplz=diff(unique(c(1,RowBreak,n+1)))
+    z=bdiag(lapply(emplz,function(i) rep(1,i) ))
     nz=length(emplz)
-    if (ColBreak[1]==1){
-      ColBreak=ColBreak[-1]
-    }
-    emplw=diff(c(1,ColBreak,d+1))
-    w=bdiag(lapply(emplw,f))
+    emplw=diff(unique(c(1,ColBreak,d+1)))
+    w=bdiag(lapply(emplw,function(i) rep(1,i)))
     nw=length(emplw)
-    if (nz==1){
-      image(x=c(1,ColBreak,d),y=c(1,n),
-            z=as.matrix(t(t(z)%*%y%*%w/(emplz%*%t(emplw)))),
-            xlab="",ylab="",xaxt="n",yaxt="n",main="Summarized data",col=couleur,breaks=brek)
-    }else if (nw==1){
-      image(x=c(1,d),y=n-c(n,RowBreak[(nz-1):1],1)+1,
-            z=t(as.matrix(t(t(z)%*%y%*%w/(emplz%*%t(emplw)))[,nz:1])),
-            xlab="",ylab="",xaxt="n",yaxt="n",main="Summarized data",col=couleur,breaks=brek)
-    }else{
-      image(x=c(1,ColBreak,d),y=n-c(n,RowBreak[(nz-1):1],1)+1,
-            z=as.matrix(t(t(z)%*%y%*%w/(emplz%*%t(emplw)))[,nz:1]),
-            xlab="",ylab="",xaxt="n",yaxt="n",main="Summarized data",col=couleur,breaks=brek)
+    resum=as.matrix(t(z)%*%y%*%w/(emplz%*%t(emplw)))
+    if (is.matrix(resum)){
+        if (nz!=1){
+            image(x=unique(c(1,ColBreak,d)),y=unique(n-c(n,RowBreak[length(RowBreak):1],1)+1),
+                  z=t(resum[nz:1,]),
+                  xlab="",ylab="",xaxt="n",yaxt="n",main="Summarized data",col=couleur,breaks=brek)
+        }else{
+            image(x=unique(c(1,ColBreak,d)),y=unique(n-c(n,RowBreak[RowBreak:1],1)+1),
+                  z=t(t(t(resum))),
+                  xlab="",ylab="",xaxt="n",yaxt="n",main="Summarized data",col=couleur,breaks=brek)
+        }
+        abline(v=ColBreak,col="purple")
+        abline(h=n-RowBreak+1,col="purple")
     }
-    abline(v=ColBreak,col="purple")
-    abline(h=n-RowBreak+1,col="purple")
     title(outer=TRUE,main=paste(as.character(threshold),"%",sep=""))
-  }
-)
+})
 
 ##' Plot method for a stab.blockSeg object
 ##'
 ##' Produce a plot of two-dimensional segmentation of a \code{stab.blockSeg} fit.
 ##'
-##' @usage evolution(x, y,...)
 ##' @param x an object of class \code{stab.blockSeg}.
 ##' @param y the observations data (or a transformation).
 ##' @param thresholds the thresholds used (percent the maximum value). By default, thresholds = 10 * (8:1).
@@ -293,15 +280,13 @@ setMethod(
 ##' Y <- rblockdata(n,mu,sigma=.5)$Y
 ##' stab.out <- stab.blockSeg(Y, 100, 15)
 ##' evolution(stab.out,Y)
-##'
+##' 
 ##' @exportMethod evolution
-setGeneric("evolution",function(x,y,...){standardGeneric("evolution")})
+setGeneric("evolution",function(x,y,thresholds=10*(8:1),postprocessing=list(post=TRUE,adjacent=2),col="GrayLevel",ask=TRUE){standardGeneric("evolution")})
 
 ##' @rdname evolution
-setMethod(
-  f="evolution",
-  signature="stab.blockSeg",
-  definition=function(x,y,thresholds=10*(8:1),postprocessing=list(post=TRUE,adjacent=2),col="GrayLevel",ask=TRUE,...){
+setMethod("evolution", "stab.blockSeg",
+          definition=function(x,y,thresholds=10*(8:1),postprocessing=list(post=TRUE,adjacent=2),col="GrayLevel",ask=TRUE){
     
     if (!is.numeric(thresholds)){
       stop("thresholds must be a sequence percent strictly between 0 and 100")
@@ -476,11 +461,11 @@ setMethod(
       resum=as.matrix(t(z)%*%y%*%w/(emplz%*%t(emplw)))
       if (is.matrix(resum)){
         if (nz!=1){
-          image(x=unique(c(1,ColBreak,d)),y=unique(n-c(n,RowBreak[nz:1],1)+1),
+          image(x=unique(c(1,ColBreak,d)),y=unique(n-c(n,RowBreak[length(RowBreak):1],1)+1),
                 z=t(resum[nz:1,]),
                 xlab="",ylab="",xaxt="n",yaxt="n",main="Summarized data",col=couleur,breaks=brek)
         }else{
-          image(x=unique(c(1,ColBreak,d)),y=unique(n-c(n,RowBreak[nz:1],1)+1),
+          image(x=unique(c(1,ColBreak,d)),y=unique(n-c(n,RowBreak[RowBreak:1],1)+1),
                 z=t(t(t(resum))),
                 xlab="",ylab="",xaxt="n",yaxt="n",main="Summarized data",col=couleur,breaks=brek)
         }

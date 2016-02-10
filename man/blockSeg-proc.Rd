@@ -5,7 +5,7 @@
 \title{blockSeg fitting procedure}
 \usage{
 blockSeg(Y, max.break = floor(min(ncol(Y), nrow(Y))/10 + 1),
-  max.var = ncol(Y)^2/2, verbose = TRUE, Beta = FALSE)
+  max.var = floor(ncol(Y)^2/2), verbose = TRUE, Beta = FALSE)
 }
 \arguments{
 \item{Y}{matrix of observations.}

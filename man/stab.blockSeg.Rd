@@ -4,8 +4,8 @@
 \alias{stab.blockSeg}
 \title{stab.blockSeg algorithm}
 \usage{
-stab.blockSeg(Y, nsimu, max.break, max.var = ncol(Y)^2/8, mc.cores = 2,
-  verbose = TRUE)
+stab.blockSeg(Y, nsimu, max.break, max.var = floor(ncol(Y)^2/8),
+  mc.cores = 2, verbose = TRUE)
 }
 \arguments{
 \item{Y}{matrix of observations.}

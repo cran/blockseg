@@ -21,7 +21,7 @@
 ##' res <- blockSeg(Y, 50)
 ##'
 ##' @export blockSeg
-blockSeg <- function(Y, max.break=floor(min(ncol(Y),nrow(Y))/10+1), max.var = ncol(Y)**2/2, verbose=TRUE, Beta=FALSE) {
+blockSeg <- function(Y, max.break=floor(min(ncol(Y),nrow(Y))/10+1), max.var = floor(ncol(Y)**2/2), verbose=TRUE, Beta=FALSE) {
   if (!(is.matrix(Y)||(class(Y)=="dgeMatrix"))){
     stop("Y must be the observations data (or a transformation)")
   }
