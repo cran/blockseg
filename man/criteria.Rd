@@ -74,7 +74,7 @@ When it is unknown, it writes
 
 Estimation of the degrees of freedom (for the elastic-net, the
 LASSO and also bounded regression) are computed by applying and
-adpating the results of Tibshirani and Taylor (see references
+adapting the results of Tibshirani and Taylor (see references
 below).
 }
 \examples{
@@ -93,4 +93,3 @@ freedom in lasso problems, Annals of Statistics, 40(2) 2012.
 \seealso{
 \code{\linkS4class{blockSeg}}.
 }
-

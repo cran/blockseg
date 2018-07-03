@@ -3,7 +3,7 @@
 \docType{methods}
 \name{predict,blockSeg-method}
 \alias{predict,blockSeg-method}
-\title{Predict method for a blockSeg object}
+\title{Predict method for a \code{blockSeg} object}
 \usage{
 \S4method{predict}{blockSeg}(object, Y, lambda = NULL)
 }
@@ -33,4 +33,3 @@ predict(res, Y, lambda=slot(res, "Lambda")[1:3])
 \seealso{
 \code{\linkS4class{blockSeg}}.
 }
-

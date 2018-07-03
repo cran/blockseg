@@ -2,10 +2,10 @@
 % Please edit documentation in R/stabsel-class.R
 \docType{class}
 \name{stab.blockSeg-class}
+\alias{stab.blockSeg-class}
 \alias{print,stab.blockSeg-method}
 \alias{show,stab.blockSeg-method,}
-\alias{stab.blockSeg-class}
-\title{Class "stab.blockSeg"}
+\title{Class \code{stab.blockSeg}}
 \description{
 Class of object returned by the \code{stab.blockSeg} function.
 }
@@ -13,7 +13,7 @@ Class of object returned by the \code{stab.blockSeg} function.
  \describe{
 
 \item{\code{RowBreaks}: }{a vectors of length the number of rows. Each case contains the number of active variable identified
-along the stability selection.}  
+along the stability selection.}
 
 \item{\code{ColBreaks}: }{a vectors of length the number of columns. Each case contains the number of active variable identified
 along the stability selection.}
@@ -26,9 +26,9 @@ along the stability selection.}
 Specific plotting and predict methods are available and documented
 (\code{\link{plot,stab.blockSeg-method}}, \code{\link{evolution,stab.blockSeg-method}}.
 }
+
 \seealso{
 See also \code{\link{plot,stab.blockSeg-method}}, \code{\link{evolution,stab.blockSeg-method}}
 \code{\link{print,blockSeg-method}} and \code{\link{stab.blockSeg}}.
 }
 \keyword{class}
-
